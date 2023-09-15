@@ -1,27 +1,17 @@
-name: Docker Image CI
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+FROM python:3-alpine
 
-jobs:
+WORKDIR /app
+COPY ./requirements.txt /app
+COPY ./src/* /app
 
-  build:
+RUN pip3 install -r requirements.txt
 
-    runs-on: ubuntu-latest
+ENV PORT=5500
+EXPOSE "$PORT/tcp"
 
-    steps:
-    - uses: actions/checkout@v3
-    - name: Login to Docker Hub
-      uses: docker/login-action@v2
-      with:
-          username: ${{ secrets.DOCKER_TOKEN_USERNAME }}
-          password: ${{ secrets.DOCKER_TOKEN_PASS }}
-    - name: Build and push
-      uses: docker/build-push-action@v4
-      with:
-          context: .
-          push: true
-          tags: d0ckmg/free-gpt4-web-api:latest
+#ENTRYPOINT nginx && uwsgi --ini /app/params.ini -w FreeGPT4_Server
+#shell form necessary
+SHELL ["python3","/app/FreeGPT4_Server.py"]
+ENTRYPOINT ["python3","/app/FreeGPT4_Server.py"]
+CMD ["--cookie-file","/cookies.json"]
