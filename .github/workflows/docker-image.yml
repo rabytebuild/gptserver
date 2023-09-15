@@ -1,17 +1,18 @@
+name: Docker Image CI
 
-FROM python:3-alpine
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
-WORKDIR /app
-COPY ./requirements.txt /app
-COPY ./src/* /app
+jobs:
 
-RUN pip3 install -r requirements.txt
+  build:
 
-ENV PORT=5500
-EXPOSE "$PORT/tcp"
+    runs-on: ubuntu-latest
 
-#ENTRYPOINT nginx && uwsgi --ini /app/params.ini -w FreeGPT4_Server
-#shell form necessary
-SHELL ["python3","/app/FreeGPT4_Server.py"]
-ENTRYPOINT ["python3","/app/FreeGPT4_Server.py"]
-CMD ["--cookie-file","/cookies.json"]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
