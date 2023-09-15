@@ -117,4 +117,4 @@ if __name__ == "__main__":
             fp.close()
 
     #Starts the server, change the port if needed
-    app.run("0.0.0.0", port=5500, debug=False)
+    app.run("0.0.0.0", port=80, debug=False)
